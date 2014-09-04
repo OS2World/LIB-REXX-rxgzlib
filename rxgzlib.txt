@@ -1,0 +1,222 @@
+21 December 1999.
+
+rxGZlib ver 1.01 -- GZIP compression procedures for OS/2 REXX
+
+These procedures will deflate, and inflate, both strings and files.
+Deflate & inflage are used by the popular GZIP compression program; hence
+the output of these procedures is readable by GZIP.EXE (and vice versa).
+
+In addition, GZIP is often used in as an http content-encoding.
+It is hoped that the availability of this library will encourage OS/2 REXX 
+programmers to use GZIP compression in their web applications.
+
+
+Installation:
+   To install rxGZlib, simply copy rxGZlib.dll to your LIBPATH; 
+   say, to x:\OS2\DLL, where x: is your boot drive.  You'll also
+   need to load the rxGZlib library; see the description of
+   rxGZloadfuncs for an example of how to do this.
+
+
+Notes:
+
+   *  SRC.ZIP contains the source code for rxGZlib.
+
+   *  RXGZLIB2.ZIP contains an alternate to the rxGZlib procedures. 
+      The procedures in the alternate support ZLIB compression (as well
+      a GZIP format). In addition, two crc-32 checksum procedures are
+      included in the alternate. See TESTGZ.DOC, in RXGZLIB2.ZIP,
+      for further discussion.
+        
+   *  TSTGZLIB.CMD contains a short example of how to use rxGZlib.
+      TST2ZLB.CMD demonstrates that the rxGZlib procedures are interoperable
+      with GZIP.EXE.
+
+   *  rxGZlib.dll does NOT require EMX (EMX, and ZLIB.LIB, are built into 
+      the dll).
+
+   *  rxGZlib has been tested under classic rexx.
+      It may, or may not, work under other flavors of REXX (such as 
+      object rexx).
+  
+   *  rxGZlib has been tested, but as a new release it may have bugs.
+      Please contact us if you run into any problems (see the bottom of 
+      this file for contact info).
+
+
+              ---------------------------------------------------
+I) Description of procedures
+
+The following describes the rxGZlib procedures.
+
+
+rxGZloadfuncs -- Load the rxGZlib library.
+   Use this to load the rxGZlib library. 
+
+    Example:
+       foo=rxfuncquery('rxGZLoadFuncs')
+       if foo=1 then do
+          foo2=RxFuncAdd( 'rxGZLoadFuncs', 'rxGZlib', 'rxGZLoadFuncs')
+           if foo2=0 then 
+              say "Sorry. rxGZlib is not available"
+           else
+              call rxGZLoadFuncs
+       end
+
+
+rxGZUnloadFuncs --Unload the rxGZlib library.
+   Use this to unload the rxGZlib library. 
+
+   Example: 
+      call rxGZUnloadFuncs
+
+
+rxGZDeflateFile(infile,outfile[,compression_opt])
+    "Deflate" infile, and store results to outfile (outfile will
+     a compressed file).
+
+     compression_Opt is optional, and should take a value between "0" and
+     "9", with "0" meaning no compression, and "9" meaning maximal
+     compression. Note that the the default compression level is 6.
+
+     Returns a status code:
+        0 - success
+        1 - problem opening/reading from inputfile 
+        2 - problem writing to outputfile
+        4 - problem finalising outputfile
+
+    Example:
+        stat=rxGZDeflateFile('c:\samples\myfile.exe','c:\samples\myfile.gz')
+        stat=rxGZDeflateFile('c:\samples\myfile.exe','c:\samples\myfile2.gz',"9")
+
+
+rxGZInflateFile(infile,outfile)
+     Inflate (unDeflate) infile, and store results to outfile. Note that infile
+     MUST be a GZIP-formatted "deflated" file (say, as produced by 
+     GZIP.EXE, or by rxGZDeflateFile).
+
+     Returns a status code:
+        0 - success
+        1 - problem opening/reading from inputfile 
+        2 - problem writing to outputfile
+        4 - problem finalising outputfile
+
+
+     Note that if infile is NOT a GZIP formatted file, rxGZInflateFile will copy
+     infile to outfile.
+
+    Example:
+        stat=rxGZInflateFile('c:\samples\myfile.gz','e:\foo\barfile.out')
+    
+rxGZDeflateString(a_string[,compression_Opt])
+     Deflate a string, and return the results.
+
+     compression_Opt is optional, and should take a value between "0" and
+     "9", with "0" meaning no compression, and "9" meaning maximal
+     compression. Note that the the default compression level is 6.
+
+     rxDeflateString creates a string using the GZIP format.
+     Note that this is somewhat different from the "ZLIB" format that
+     may be produced by other versions of the ZLIB library.
+
+
+     The advantage of the "GZIP" format is that the output can be read
+     by GZIP.EXE. For example, 
+     If ...
+        a) you have a file (say FOO.BAR),
+        b) you create FOO.BAR.GZ using rxGZDeflateFile
+        c) you read FOO.BAR into a string (VARFOO)
+        d) you create VARFOO_gz using rxDeflateString; i.e.;
+           VARFOO_GZ=rxdeflatestring(varfoo)
+     Then ...
+        the contents of FOO.BAR.GZ and VARFOO_gz will be the same. 
+
+     Example:
+          astring='This is just a short string that we will use'
+          deflated_string=rxDeflateString(astring)
+
+
+rxGZInflateString(deflated_string)
+    Inflate (undeflate) a "GZIP" string, and return the results.
+
+    If an error occurs, then an empty string will be returned. 
+    This can happen if deflated_string is not a "deflated string".
+
+     Example:
+          astring='This is just a short string that we will use'
+          deflated_string=rxDeflateString(astring)
+
+            /* .... a zillion lines of  miscellaneous code */
+
+           astring_recover=rxInflateString(deflated_string)
+       
+
+              ---------------------------------------------------
+
+II) Future changes:
+
+We may add a more formal method of reporting error codes, string to file 
+(and vice versa) procedures, and support for the ZLIB format (which is
+slightly more efficient for short strings).
+
+If and when this occurs, it will probably appear in the MYGZIP "alternate"
+version of rxGZlib.
+
+              ---------------------------------------------------
+
+
+III) Example:
+
+   Although it's not necessarily recommended, the following illustrates
+   how one can use rxDeflateString instead of rxDeflateFile.
+
+   /* read a file into a string (with no error checking) */
+   input_file='c:\samples\foobar.exe'
+   sz=stream(input_file,'c','query size')
+   astring=charin(input_file,1,sz)
+   foo=stream(input_file,'c','close')
+   
+   deflated_astringz=rxDeflateString(astring,1)
+   
+   output_file='c:\samples\foobar.exe.gz'
+   oo=charout(output_file,deflated_astringz,1)
+   foo=stream(output_file,'c','close')
+
+              ---------------------------------------------------
+
+IV) Disclaimer and terms of use:
+
+   The various components of rxGZlib are freeware that are to be used at  
+   your own risk -- the authors and any potentially affiliated 
+   institutions disclaim all responsibilties for any consequence arising from 
+   the use, misuse, or abuse of this software (or pieces of this software).
+
+   You may use this (or subsets of this) program as you see fit,    
+   including for commercial purposes; so long as  proper attribution
+   is made, and so long as such use does not in any way preclude 
+   others from making use of this code.
+
+   Note that the zlib, and gzip, formats are in the public domain --
+   see http://www.gzip.org for the details.
+
+              ---------------------------------------------------
+
+V) Contact information
+
+The principal contact for rxGZlib related matters is:
+
+         Daniel Hellerstein (danielh@crosslink.net)
+
+who is merely instigating & packaging & distributing the work of:
+
+   Christopher McRae,  christopher.mcrae@mq.edu.au
+   Timur Kazimirov, timurk@sax.mmbank.ru
+
+and with help from
+   Michal Necasek, mike@mendelu.cz
+
+The most current distribution version of rxGZlib can be found at:
+   http://www.srehttp.org/apps/rxgzlib, or 
+   http://www.srehttp.org/distrib/rxgzlib.zip
+
+.end of documentation

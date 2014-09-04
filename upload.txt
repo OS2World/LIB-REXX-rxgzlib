@@ -1,0 +1,31 @@
+                          Upload Information Template for Hobbes.nmsu.edu
+                          ===============================================
+
+        Archive Filename: rxGZlib
+       Short Description: OS/2 REXX callable procedures to GZIP strings and files
+        Long Description: rxGZlib.dll is an OS/2 REXX callable dynamic link library
+that contains GZIP procedures. These procedures will deflate and inflate files; and
+store results using a GZIP.EXE compatible format. In addition, ZLIB formatted
+compression, and crc-32 checksums, are supported.
+                          
+      Proposed directory
+           for placement: /pub/os2/dev/rexx or  /pub/os2/util/archiver: 
+
+               Your name:  Daniel Hellerstein
+           Email address: danielh@crosslink.net
+    Program contact name: (same)
+   Program contact email: (same)
+             Program URL: http://www.srehttp.org/apps/rxgzlib/
+
+      Would you like the
+   contact email address
+    included in listings? yes
+
+Operating System/Version: 
+ Additional requirements: tested under classic OS/2 REXX
+
+                Replaces: RXGZLIB.ZIP (this is a minor upgrade)
+
+
+
+

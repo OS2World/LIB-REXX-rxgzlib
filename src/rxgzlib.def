@@ -1,0 +1,18 @@
+LIBRARY RXGZLIB INITINSTANCE LONGNAMES
+
+PROTMODE
+
+DESCRIPTION 'RxGZlib - a REXX callable GZip'
+
+DATA MULTIPLE NONSHARED
+
+STACKSIZE 256000
+
+EXPORTS
+     RXGZLOADFUNCS        = rxgzLoadFuncs
+     RXGZUNLOADFUNCS      = rxgzUnloadFuncs
+     RXGZDEFLATEFILE      = rxgzDeflateFile
+     RXGZINFLATEFILE      = rxgzInflateFile
+     RXGZDEFLATESTRING    = rxgzDeflateString
+     RXGZINFLATESTRING    = rxgzInflateString
+

@@ -1,0 +1,74 @@
+24 Dec 1999
+
+In addition to the "main" rxGZlib library, you can also use the "alternate" 
+rxGZlib library.  
+
+Advantages:
+  * A few extra functions (CRC functions)
+  * A ZLIB format is also supported
+
+Disadvantages:
+  * requires that Z.DLL be in your LIBPATH
+    (Z.DLL is included in rxgzlib2.zip)
+
+
+rxGzLoadFuncs: Load the functions
+ 
+  example:
+        call RxFuncAdd 'RxGzLoadFuncs', 'RXGZLIB', 'RxGzLoadFuncs'
+        call RxGzLoadFuncs
+
+rxGzUnloadFunds: Unload the functions
+ example:
+       call RxGzUnloadFuncs
+
+
+rxGZString: GZIP a string
+  syntax:
+      gz_string=rxGZstring(string_length,string[,Mode])
+  where
+        MODE is optional: it should be either GZIP or ZLIB. 
+        GZIP mode (the default) produces output that can be ready GZIP.EXE.
+        ZLIB mode output can NOT be read by GZIP.EXE, but is somewhat shorter.
+        Note that MODE is case insensitive (acutally, only the first letter
+        is used)
+
+  example:
+      astring='Mary had  little lamb whose fleece was very old'
+      gz_string=rxGZstring(length(astring),astring)
+      zlib_string=rxGZstring(length(astring),astring,'ZLIB')
+
+
+rxUNGZString: UnGZIP a GZIP'ed string
+  syntax:
+      string=rxGZstring(gzstring_length,gzstring[,mode])
+  example:
+      astring2=rxGZstring(length(gz_string),gz_string)
+
+  where
+        MODE is required if ZLIB mode was used to compress the string.
+        As with rxgZString, mode can be GZIP or ZLIB.
+  
+rxGZfile: GZIP a file
+   syntax:
+       rc= rxgzfile(input_file,gz_file):
+   example:
+        rc=rxgzfile('infile.1','infile.1.gz')
+
+rxGZfile: unGZIP a file
+   syntax:
+       rc= rxgzfile(gz_file,out_file):
+   example:
+        rc=rxgzfile('infile.1.gz','infile.1.dup')
+
+
+RxGzCrc32 (str_length, string) 
+      returns crc32 of a given stringm, as eight hex characters;
+
+RxGzAdler32 (str_length, string) 
+   returns adler-32 crc of a given string, as eight hex characters
+
+
+
+
+
